@@ -52,6 +52,10 @@ bun run list-projects
 
 プロジェクト一覧が表示されるので、通知したいプロジェクトの ID を `.env` の `TICKTICK_PROJECT_ID` に設定してください。
 
+> [!NOTE]
+> **Inbox を使いたい場合**、InboxのプロジェクトはAPIの仕様上 `list-projects` では取得できません。  
+> IDを確認するには、ブラウザでTickTickを開き、開発者ツール（F12）→ **Networkタブ** でタスク関連のリクエストを確認してください。レスポンス内の `projectId` フィールドを探すと、Inboxのプロジェクトは `inbox` から始まるIDになっています。
+
 ### 5. 通知テスト
 
 ```bash

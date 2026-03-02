@@ -50,6 +50,10 @@ bun run list-projects
 
 A list of your TickTick projects will be printed. Copy the ID of the project you want to monitor and set it as `TICKTICK_PROJECT_ID` in `.env`.
 
+> [!NOTE]
+> **To use your Inbox**, the inbox project is not returned by `list-projects`.  
+> To find its ID, open TickTick in your browser, open DevTools (F12) → **Network** tab, and look for any task-related requests. Find the `projectId` field — the Inbox ID starts with `inbox`.
+
 ### 5. Test notifications
 
 ```bash
