@@ -1,0 +1,22 @@
+{
+  "name": "ticktick-discord",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run index.ts",
+    "auth": "bun run index.ts --auth",
+    "list-projects": "bun run index.ts --list-projects",
+    "notify": "bun run index.ts --notify"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "node-cron": "^4.2.1"
+  }
+}
