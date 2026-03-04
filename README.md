@@ -1,6 +1,6 @@
 # ticktick-discord
 
-A tool that automatically sends TickTick task notifications to Discord at **07:00 and 21:00 (JST)** every day.  
+A tool that automatically sends TickTick task notifications to Discord at specified times every day.  
 Notifies overdue, today's, and tomorrow's tasks in Discord Embed format.
 
 ## Requirements

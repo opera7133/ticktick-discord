@@ -1,7 +1,7 @@
 /**
  * cron スケジューラー
  *
- * 朝 07:00・夜 21:00 (JST) にタスク通知を実行する
+ * 環境変数 NOTIFICATION_CRON で指定された時間にタスク通知を実行する
  */
 
 import cron from "node-cron";
@@ -30,35 +30,37 @@ async function runNotification(): Promise<void> {
 }
 
 export function startScheduler(): void {
-  // 朝 07:00 (Asia/Tokyo)
-  cron.schedule(
-    "0 7 * * *",
-    async () => {
-      console.log("⏰ [朝の通知] 実行開始");
-      try {
-        await runNotification();
-      } catch (err) {
-        console.error("❌ 朝の通知でエラーが発生しました:", err);
-      }
-    },
-    { timezone: "Asia/Tokyo" }
-  );
+  const cronConfig = process.env.NOTIFICATION_CRON || "0 20 * * *";
+  const timezone = process.env.TIMEZONE || "Asia/Tokyo";
 
-  // 夜 21:00 (Asia/Tokyo)
-  cron.schedule(
-    "0 21 * * *",
-    async () => {
-      console.log("⏰ [夜の通知] 実行開始");
-      try {
-        await runNotification();
-      } catch (err) {
-        console.error("❌ 夜の通知でエラーが発生しました:", err);
-      }
-    },
-    { timezone: "Asia/Tokyo" }
-  );
+  // カンマ区切りで複数のスケジュールに対応
+  const schedules = cronConfig.split(",").map((s) => s.trim());
 
-  console.log("✅ スケジューラーを起動しました。（毎日 07:00 / 21:00 JST）");
+  for (const schedule of schedules) {
+    if (!cron.validate(schedule)) {
+      console.error(`⚠️ 不正な cron 設定です: "${schedule}"`);
+      continue;
+    }
+
+    cron.schedule(
+      schedule,
+      async () => {
+        console.log(`⏰ [通知実行] 開始 (${schedule})`);
+        try {
+          await runNotification();
+        } catch (err) {
+          console.error(`❌ 通知実行中にエラーが発生しました (${schedule}):`, err);
+        }
+      },
+      { timezone }
+    );
+  }
+
+  console.log(
+    `✅ スケジューラーを起動しました。\n   設定: ${schedules.join(
+      ", "
+    )}\n   タイムゾーン: ${timezone}`
+  );
 }
 
 export { runNotification };

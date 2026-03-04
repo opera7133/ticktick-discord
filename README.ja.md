@@ -2,7 +2,7 @@
 
 [English README](README.md)
 
-TickTickのタスクを毎日 **07:00 / 21:00（JST）** にDiscordへ通知するツールです。  
+TickTickのタスクを毎日指定した時間にDiscordへ通知するツールです。  
 期限切れ・今日・明日のタスクをEmbed形式で通知します。
 
 ## 必要なもの
@@ -33,6 +33,10 @@ TICKTICK_CLIENT_SECRET=your_client_secret
 TICKTICK_REDIRECT_URI=http://localhost:3000/callback
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 TICKTICK_PROJECT_ID=   # 後で設定
+
+# 通知スケジュール (cron 形式, デフォルト: 毎日 20:00)
+NOTIFICATION_CRON=0 20 * * *
+TIMEZONE=Asia/Tokyo
 ```
 
 ### 3. OAuth2 認証
@@ -72,7 +76,7 @@ Discordに今すぐ通知を送信してテストできます。
 bun run start
 ```
 
-スケジューラーが起動し、毎日 **07:00 / 21:00（JST）** に自動で通知します。  
+スケジューラーが起動し、設定した時間（デフォルト：毎日 20:00 JST）に自動で通知します。  
 プロセスを常駐させるには `pm2` などのプロセスマネージャーの利用を推奨します。
 
 ## コマンド一覧

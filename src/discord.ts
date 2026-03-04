@@ -34,6 +34,7 @@ interface DiscordEmbed {
 
 interface DiscordPayload {
   username?: string;
+  avatar_url?: string;
   embeds: DiscordEmbed[];
 }
 
@@ -148,10 +149,12 @@ export async function sendNotification(
 
   const now = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
   const username = "TickTick Bot";
+  const avatarUrl = "https://i.postimg.cc/qBSd8k8C/Tick-Tick-logo.png";
 
   // ヘッダーメッセージ
   await sendWebhook(webhookUrl, {
     username,
+    avatar_url: avatarUrl,
     embeds: [
       {
         title: "📋 タスク通知",
