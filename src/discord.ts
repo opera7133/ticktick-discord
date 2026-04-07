@@ -8,8 +8,8 @@
 import type { ClassifiedTasks, Task } from "./ticktick.js";
 
 const DISCORD_EMBED_COLOR = {
-  overdue: 0xe74c3c,  // 赤
-  today: 0xf39c12,    // オレンジ
+  overdue: 0xe74c3c, // 赤
+  today: 0xf39c12, // オレンジ
   tomorrow: 0x2ecc71, // 緑
 } as const;
 
@@ -47,14 +47,28 @@ function buildTaskEmbed(task: Task, color: number): DiscordEmbed {
   const fields: DiscordEmbed["fields"] = [];
 
   if (task.dueDate) {
-    // YYYY-MM-DDThh:mm... → 日本語表示
-    const dateStr = task.dueDate.slice(0, 16).replace("T", " ");
+    // UTC → 環境変数のタイムゾーンに変換して表示
+    const timezone = process.env.TIMEZONE || "Asia/Tokyo";
+    const date = new Date(task.dueDate);
+    const dateStr = date.toLocaleString("ja-JP", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
     fields.push({ name: "📅 期限", value: dateStr, inline: true });
   }
 
   const priority = task.priority ?? 0;
   if (priority > 0 && PRIORITY_LABEL[priority]) {
-    fields.push({ name: "優先度", value: PRIORITY_LABEL[priority], inline: true });
+    fields.push({
+      name: "優先度",
+      value: PRIORITY_LABEL[priority],
+      inline: true,
+    });
   }
 
   if (task.tags && task.tags.length > 0) {
@@ -81,7 +95,7 @@ function buildSectionEmbed(
   label: string,
   emoji: string,
   color: number,
-  count: number
+  count: number,
 ): DiscordEmbed {
   return {
     title: `${emoji} ${label}（${count}件）`,
@@ -94,7 +108,7 @@ function buildSectionEmbed(
  */
 async function sendWebhook(
   webhookUrl: string,
-  payload: DiscordPayload
+  payload: DiscordPayload,
 ): Promise<void> {
   const res = await fetch(webhookUrl, {
     method: "POST",
@@ -104,7 +118,7 @@ async function sendWebhook(
 
   if (!res.ok) {
     throw new Error(
-      `Discord Webhook エラー: ${res.status} ${await res.text()}`
+      `Discord Webhook エラー: ${res.status} ${await res.text()}`,
     );
   }
 
@@ -118,7 +132,7 @@ async function sendWebhook(
 async function sendEmbeds(
   webhookUrl: string,
   embeds: DiscordEmbed[],
-  username: string
+  username: string,
 ): Promise<void> {
   if (embeds.length === 0) return;
 
@@ -131,9 +145,7 @@ async function sendEmbeds(
 /**
  * 分類済みタスクを Discord へ通知する
  */
-export async function sendNotification(
-  tasks: ClassifiedTasks
-): Promise<void> {
+export async function sendNotification(tasks: ClassifiedTasks): Promise<void> {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) {
     throw new Error("DISCORD_WEBHOOK_URL が設定されていません");
@@ -196,7 +208,12 @@ export async function sendNotification(
     if (section.taskList.length === 0) continue;
 
     const embeds: DiscordEmbed[] = [
-      buildSectionEmbed(section.label, section.emoji, section.color, section.taskList.length),
+      buildSectionEmbed(
+        section.label,
+        section.emoji,
+        section.color,
+        section.taskList.length,
+      ),
       ...section.taskList.map((t) => buildTaskEmbed(t, section.color)),
     ];
 

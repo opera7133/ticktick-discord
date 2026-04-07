@@ -31,6 +31,10 @@ TICKTICK_CLIENT_SECRET=your_client_secret
 TICKTICK_REDIRECT_URI=http://localhost:3000/callback
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 TICKTICK_PROJECT_ID=   # set after step 4
+
+# Notify Schedule (cron, default: 20:00 every day)
+NOTIFICATION_CRON=0 20 * * *
+TIMEZONE=Asia/Tokyo
 ```
 
 ### 3. Authenticate with OAuth2
